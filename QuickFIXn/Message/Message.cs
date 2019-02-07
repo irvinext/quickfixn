@@ -119,14 +119,24 @@ namespace QuickFix
             return new MsgType(GetMsgType(fixstring));
         }
 
-        public static StringField ExtractField(string msgstr, ref int pos, DataDictionary.DataDictionary sessionDD, DataDictionary.DataDictionary appDD)
+        public static StringField ExtractField(string msgstr, ref int pos, DataDictionary.DataDictionary sessionDD, DataDictionary.DataDictionary appDD, int? xmlLen = null)
         {
             try
             {
                 int tagend = msgstr.IndexOf("=", pos);
                 int tag = Convert.ToInt32(msgstr.Substring(pos, tagend - pos));
                 pos = tagend + 1;
-                int fieldvalend = msgstr.IndexOf("\u0001", pos);
+
+                int fieldvalend;
+                if (tag == Tags.XmlData && xmlLen.HasValue)
+                {
+                    fieldvalend = pos + xmlLen.Value;
+                }
+                else
+                {
+                    fieldvalend = msgstr.IndexOf("\u0001", pos);
+                }
+
                 StringField field =  new StringField(tag, msgstr.Substring(pos, fieldvalend - pos));
 
                 /*
@@ -397,11 +407,21 @@ namespace QuickFix
             int count = 0;
             int pos = 0;
 	        DataDictionary.IFieldMapSpec msgMap = null;
+            int? xmlLen = null;
 
             while (pos < msgstr.Length)
             {
-                StringField f = ExtractField(msgstr, ref pos, sessionDD, appDD);
-                
+                StringField f = ExtractField(msgstr, ref pos, sessionDD, appDD, xmlLen);
+
+                if (f.Tag == Tags.XmlDataLen)
+                {
+                    int tmpXmlLen;
+                    if (int.TryParse(f.Obj, out tmpXmlLen))
+                    {
+                        xmlLen = tmpXmlLen;
+                    }
+                }
+
                 if (validate && (count < 3) && (Header.HEADER_FIELD_ORDER[count++] != f.Tag))
                     throw new InvalidMessage("Header fields out of order");
 

@@ -16,7 +16,7 @@ namespace QuickFix
         public void OnCreate(SessionID sessionID) { }
         public void OnLogout(SessionID sessionID) { }
         public void OnLogon(SessionID sessionID) { }
-        public void ToAdmin(Message message, SessionID sessionID) { }
+        public bool ToAdmin(Message message, SessionID sessionID) { return true; }
         public void ToApp(Message message, SessionID sessionID) { }
     }
 }

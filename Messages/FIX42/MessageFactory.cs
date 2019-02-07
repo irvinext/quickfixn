@@ -65,6 +65,7 @@ namespace QuickFix
                     case QuickFix.FIX42.ListCancelRequest.MsgType: return new QuickFix.FIX42.ListCancelRequest();
                     case QuickFix.FIX42.ListStatusRequest.MsgType: return new QuickFix.FIX42.ListStatusRequest();
                     case QuickFix.FIX42.BusinessMessageReject.MsgType: return new QuickFix.FIX42.BusinessMessageReject();
+                    case QuickFix.FIX42.Xml.MsgType: return new QuickFix.FIX42.Xml();
                 }
 
                 return new QuickFix.Message();

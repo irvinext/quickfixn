@@ -22,8 +22,9 @@ namespace QuickFix.DataDictionary
 		public bool CheckFieldsOutOfOrder { get; set; }
 		public bool CheckFieldsHaveValues { get; set; }
 		public bool CheckUserDefinedFields { get; set; }
+        public bool CheckTags { get; set; }
 
-		public DDMap Header = new DDMap();
+        public DDMap Header = new DDMap();
 		public DDMap Trailer = new DDMap();
 
 		public DataDictionary()
@@ -31,6 +32,7 @@ namespace QuickFix.DataDictionary
 			CheckFieldsHaveValues = true;
 			CheckFieldsOutOfOrder = true;
 			CheckUserDefinedFields = true;
+            CheckTags = true;
 		}
 
 		/// <summary>
@@ -72,6 +74,7 @@ namespace QuickFix.DataDictionary
 			this.CheckFieldsHaveValues = src.CheckFieldsHaveValues;
 			this.CheckFieldsOutOfOrder = src.CheckFieldsOutOfOrder;
 			this.CheckUserDefinedFields = src.CheckUserDefinedFields;
+            this.CheckTags = src.CheckTags;
 			this.Header = src.Header;
 			this.Trailer = src.Trailer;
 		}
@@ -409,7 +412,7 @@ namespace QuickFix.DataDictionary
 		/// <returns></returns>
 		public bool ShouldCheckTag(Fields.IField field)
 		{
-			if (!this.CheckUserDefinedFields && (field.Tag >= Fields.Limits.USER_MIN))
+			if (!this.CheckTags || !this.CheckUserDefinedFields && (field.Tag >= Fields.Limits.USER_MIN))
 				return false;
 			return true;
 		}

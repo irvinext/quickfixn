@@ -21,7 +21,7 @@ namespace QuickFix
         /// </summary>
         /// <param name="message"></param>
         /// <param name="sessionID"></param>
-        void ToAdmin(Message message, SessionID sessionID);
+        bool ToAdmin(Message message, SessionID sessionID);
 
         /// <summary>
         /// This callback notifies you when an administrative message is sent from a

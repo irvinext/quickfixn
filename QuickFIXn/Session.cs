@@ -609,7 +609,7 @@ namespace QuickFix
 
                 if (MsgType.LOGON.Equals(msgType))
                     NextLogon(message);
-                else if (!IsLoggedOn)
+                else if (!IsLoggedOn && !MsgType.LOGOUT.Equals(msgType)) //RI: in CME the Logout with "reset seqnum" can be sent on Logon request, so the IsLoggedOn = false
                     Disconnect(string.Format("Received msg type '{0}' when not logged on", msgType));
                 else if (MsgType.HEARTBEAT.Equals(msgType))
                     NextHeartbeat(message);
@@ -1211,7 +1211,7 @@ namespace QuickFix
             }
         }
 
-        protected bool GenerateResendRequest(string beginString, int msgSeqNum)
+        public bool GenerateResendRequest(string beginString, int msgSeqNum)
         {
             int beginSeqNum = state_.GetNextTargetMsgSeqNum();
             int endRangeSeqNum = msgSeqNum - 1;
@@ -1632,7 +1632,8 @@ namespace QuickFix
 
                 if (Message.IsAdminMsgType(msgType))
                 {
-                    this.Application.ToAdmin(message, this.SessionID);
+                    if (!this.Application.ToAdmin(message, this.SessionID))
+                        return false;
 
                     if (MsgType.LOGON.Equals(msgType) && !state_.ReceivedReset)
                     {
