@@ -448,6 +448,8 @@ namespace QuickFix
         /// </summary>
         public void Next()
         {
+            Application.OnIdle(SessionID);
+
             if (!HasResponder)
                 return;
 

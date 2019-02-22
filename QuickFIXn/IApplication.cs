@@ -100,5 +100,7 @@ namespace QuickFix
         /// </summary>
         /// <param name="sessionID"></param>
         void OnLogon(SessionID sessionID);
+
+        void OnIdle(SessionID sessionID);
     }
 }
