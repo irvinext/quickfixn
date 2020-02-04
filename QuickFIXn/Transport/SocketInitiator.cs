@@ -162,15 +162,33 @@ namespace QuickFix.Transport
         /// <param name="settings"></param>
         protected override void OnConfigure(SessionSettings settings)
         {
+            var anySessionId = settings.GetSessions().FirstOrDefault();
+            QuickFix.Dictionary dictionary = null;
             try
             {
-                reconnectInterval_ = Convert.ToInt32(settings.Get().GetLong(SessionSettings.RECONNECT_INTERVAL));
+                dictionary = anySessionId == null ? settings.Get() : settings.Get(anySessionId);
             }
-            catch (System.Exception)
-            { }
+            catch(Exception ex)
+            {
+                Debug.Write("Drop Copy. Error find settings for . " + anySessionId + ". " + ex.Message, "ERROR");
+                dictionary = settings.Get();
+            }
+
+            try
+            {
+
+                reconnectInterval_ = Convert.ToInt32(dictionary.GetLong(SessionSettings.RECONNECT_INTERVAL));
+
+                Debug.Write("Drop Copy. Reconnect Interval: " + reconnectInterval_, "INFO");
+            }
+            catch (System.Exception ex)
+            {
+                Debug.Write("Drop Copy. Wrong Reconnect Interval. " + ex.Message, "ERROR");
+                reconnectInterval_ = 999999; //In case it is misconfigured, it is set to > 1 week
+            }
 
             // Don't know if this is required in order to handle settings in the general section
-            socketSettings_.Configure(settings.Get());
+            socketSettings_.Configure(dictionary);
         }       
 
         protected override void OnStart()
