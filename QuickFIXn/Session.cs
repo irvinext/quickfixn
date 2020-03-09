@@ -948,7 +948,7 @@ namespace QuickFix
                 string senderCompID = msg.Header.GetField(Fields.Tags.SenderCompID);
                 string targetCompID = msg.Header.GetField(Fields.Tags.TargetCompID);
 
-                if (msgType == MsgType.REJECT) //RI: added here becausse FromAdmin is not called is seqnums are not synchronized
+                if (msgType == MsgType.REJECT) //RI: added here because FromAdmin is not called if seqnums are not synchronized
                 {
                     const int startSequenceNumberTag = 5024;
 
@@ -957,9 +957,17 @@ namespace QuickFix
                         int startSequenceNumber = msg.GetInt(startSequenceNumberTag);
                         if (startSequenceNumber > 1)
                         {
-                            this.Log.OnEvent("The session [" + senderCompID + "] is rejected by server. Possible reasons: (a) The Drop Copy sessions is started in 48 hours since last start (or since Sunday), or (b) there are issue on Drop Copy server side and they set the start SeqNum to higher value (usually on Sunday), or (c) some unknown error. It is needed to stop application and manually set the TargetSeqNum of this sessions to " + startSequenceNumber + " in the .seqnum file to start the Drop Copy session. This operation is safe in case this are variants (a) or (b). And we can looks the Drop Copy data in case this is variant (c). Please see more details in the http://10.3.19.15/confluence/display/PROJ/Support .");
-                            Trace.TraceError("Drop Copy. The session [" + senderCompID + "] is rejected by server. Possible reasons: (a) The Drop Copy sessions is started in 48 hours since last start (or since Sunday), or (b) there are issue on Drop Copy server side and they set the start SeqNum to higher value (usually on Sunday), or (c) some unknown error. It is needed to stop application and manually set the TargetSeqNum of this sessions to " + startSequenceNumber + " in the .seqnum file to start the Drop Copy session. This operation is safe in case this are variants (a) or (b). And we can looks the Drop Copy data in case this is variant (c). Please see more details in the http://10.3.19.15/confluence/display/PROJ/Support .");
+                            this.Log.OnEvent("The session [" + senderCompID + "] is rejected by server. Possible reasons: (a) The Drop Copy session is started in 48 hours since last start (or since Sunday), or (b) there are issue on Drop Copy server side and they set the start SeqNum to higher value (usually on Sunday), or (c) some unknown error. It is needed to stop application and manually set the TargetSeqNum of this sessions to " + startSequenceNumber + " in the .seqnum file to start the Drop Copy session. This operation is safe in case of variants (a) or (b). And we can loose the Drop Copy data in case this is variant (c). Please see more details in the http://10.3.19.15/confluence/display/PROJ/Support .");
                         }
+                    }
+
+                    try
+                    {
+                        Application.OnRejectBeforeVerification(msg, SessionID);
+                    }
+                    catch(Exception ex)
+                    {
+                        this.Log.OnEvent("Error call OnRejectBeforeVerification for session [" + senderCompID + "]. " + ex.Message);
                     }
                 }
 

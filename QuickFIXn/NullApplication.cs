@@ -19,5 +19,6 @@ namespace QuickFix
         public bool ToAdmin(Message message, SessionID sessionID) { return true; }
         public void ToApp(Message message, SessionID sessionID) { }
         public void OnIdle(SessionID sessionId) { }
+        public void OnRejectBeforeVerification(Message message, SessionID sessionID) { }
     }
 }

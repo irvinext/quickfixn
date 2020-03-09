@@ -179,11 +179,11 @@ namespace QuickFix.Transport
 
                 reconnectInterval_ = Convert.ToInt32(dictionary.GetLong(SessionSettings.RECONNECT_INTERVAL));
 
-                Debug.Write("Drop Copy. Reconnect Interval: " + reconnectInterval_, "INFO");
+                Trace.TraceInformation("Drop Copy. Reconnect Interval: " + reconnectInterval_, "INFO");
             }
             catch (System.Exception ex)
             {
-                Debug.Write("Drop Copy. Wrong Reconnect Interval. " + ex.Message, "ERROR");
+                Trace.TraceError("Drop Copy. Wrong Reconnect Interval. " + ex.Message, "ERROR");
                 reconnectInterval_ = 999999; //In case it is misconfigured, it is set to > 1 week
             }
 

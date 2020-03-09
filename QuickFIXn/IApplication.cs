@@ -102,5 +102,11 @@ namespace QuickFix
         void OnLogon(SessionID sessionID);
 
         void OnIdle(SessionID sessionID);
+
+        /// <summary>
+        /// Called when Reject with Tag (5024, StartSequenceNumber) is received. 
+        /// It usually means the server side increased seqnums after som server side problems.
+        /// </summary>
+        void OnRejectBeforeVerification(Message message, SessionID sessionID);
     }
 }
